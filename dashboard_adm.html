@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin - Loja Virtual</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        discord: {
+                            900: '#1a1b1e', 800: '#232428', 700: '#2f3136', 600: '#40444b'
+                        },
+                        accent: { 500: '#5865f2', 600: '#4752c4' },
+                        text: { primary: '#dcddde', secondary: '#b9bbbe' }
+                    },
+                    fontFamily: { sans: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'] }
+                }
+            }
+        };
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #1a1b1e; }
+        ::-webkit-scrollbar-thumb { background: #5865f2; border-radius: 5px; }
+        .hover-lift:hover { transform: translateY(-2px); transition: transform 0.2s ease; }
+        .border-discord { border: 1px solid #40444b; }
+        .gradient-text { background: linear-gradient(to right, #5865f2, #b9bbbe); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    </style>
+</head>
+<body class="bg-discord-900 text-text-primary font-sans antialiased">
+    <aside class="fixed top-0 left-0 h-full w-20 bg-discord-800 flex flex-col items-center py-6 space-y-6">
+        <div class="h-12 w-12 rounded-full bg-discord-700 flex items-center justify-center">
+            <i class="fas fa-store text-accent-500 text-xl"></i>
+        </div>
+        <a href="index.html" class="text-text-secondary hover:text-accent-500 transition-colors" title="Home"><i class="fas fa-home fa-2x"></i></a>
+        <a href="products.html" class="text-text-secondary hover:text-accent-500 transition-colors" title="Produtos"><i class="fas fa-shopping-bag fa-2x"></i></a>
+        <a href="login.html" class="text-text-secondary hover:text-accent-500 transition-colors" title="Login"><i class="fas fa-sign-in-alt fa-2x"></i></a>
+        <a href="register.html" class="text-text-secondary hover:text-accent-500 transition-colors" title="Registro"><i class="fas fa-user-plus fa-2x"></i></a>
+        <a href="dashboard_adm.html" class="text-accent-500" title="Dashboard Admin"><i class="fas fa-cog fa-2x"></i></a>
+        <a href="dashboard_client.html" class="text-text-secondary hover:text-accent-500 transition-colors" title="Dashboard Cliente"><i class="fas fa-user fa-2x"></i></a>
+    </aside>
+    <div id="login-section" class="min-h-screen flex items-center justify-center ml-20">
+        <div class="bg-discord-800 p-8 rounded-lg border-discord max-w-md w-full">
+            <h1 class="text-2xl font-bold gradient-text mb-6 text-center">Login do Admin</h1>
+            <div class="mb-6">
+                <label for="api-key" class="block text-sm font-medium text-text-primary mb-2">API Key do Admin</label>
+                <div class="relative">
+                    <i class="fas fa-key absolute left-4 top-1/2 transform -translate-y-1/2 text-text-secondary"></i>
+                    <input type="text" id="api-key" class="pl-12 w-full p-4 bg-discord-700 rounded-lg border-discord focus:ring-2 focus:ring-accent-500 focus:border-transparent" placeholder="Insira a API Key" required>
+                </div>
+            </div>
+            <button id="login" class="w-full bg-accent-500 text-white py-3 rounded-lg hover:bg-accent-600 hover-lift transition-colors flex items-center justify-center">
+                <span>Entrar</span>
+                <i class="fas fa-spinner fa-spin hidden ml-2 login-loading"></i>
+            </button>
+            <p id="login-message" class="mt-4 text-center text-sm text-red-500 hidden"></p>
+        </div>
+    </div>
+    <div id="dashboard-section" class="min-h-screen hidden ml-20">
+        <header class="bg-discord-800 py-4">
+            <div class="px-8 flex justify-between items-center">
+                <h1 class="text-2xl font-bold gradient-text">Dashboard Admin</h1>
+                <button id="logout" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 hover-lift transition-colors">Sair</button>
+            </div>
+        </header>
+        <main class="px-8 py-10">
+            <div class="mb-10">
+                <h2 class="text-xl font-semibold gradient-text mb-6">Criar Categoria</h2>
+                <div class="bg-discord-800 p-6 rounded-lg border-discord">
+                    <div class="mb-6">
+                        <label for="category-name" class="block text-sm font-medium text-text-primary mb-2">Nome</label>
+                        <input type="text" id="category-name" class="w-full p-4 bg-discord-700 rounded-lg border-discord">
+                    </div>
+                    <div class="mb-6">
+                        <label for="category-image" class="block text-sm font-medium text-text-primary mb-2">URL da Imagem</label>
+                        <input type="text" id="category-image" class="w-full p-4 bg-discord-700 rounded-lg border-discord">
+                    </div>
+                    <button id="create-category" class="w-full bg-accent-500 text-white py-3 rounded-lg hover:bg-accent-600 hover-lift transition-colors flex items-center justify-center">
+                        <span>Criar</span>
+                        <i class="fas fa-spinner fa-spin hidden ml-2 category-loading"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="mb-10">
+                <h2 class="text-xl font-semibold gradient-text mb-6">Criar Produto</h2>
+                <div class="bg-discord-800 p-6 rounded-lg border-discord">
+                    <div class="mb-6">
+                        <label for="product-name" class="block text-sm font-medium text-text-primary mb-2">Nome</label>
+                        <input type="text" id="product-name" class="w-full p-4 bg-discord-700 rounded-lg border-discord">
+                    </div>
+                    <div class="mb-6">
+                        <label for="product-price" class="block text-sm font-medium text-text-primary mb-2">Preço</label>
+                        <input type="number" id="product-price" class="w-full p-4 bg-discord-700 rounded-lg border-discord">
+                    </div>
+                    <div class="mb-6">
+                        <label for="product-category" class="block text-sm font-medium text-text-primary mb-2">Categoria</label>
+                        <select id="product-category" class="w-full p-4 bg-discord-700 rounded-lg border-discord"></select>
+                    </div>
+                    <div class="mb-6">
+                        <label for="product-description" class="block text-sm font-medium text-text-primary mb-2">Descrição</label>
+                        <textarea id="product-description" class="w-full p-4 bg-discord-700 rounded-lg border-discord"></textarea>
+                    </div>
+                    <div class="mb-6">
+                        <label for="product-stock" class="block text-sm font-medium text-text-primary mb-2">Estoque</label>
+                        <input type="number" id="product-stock" class="w-full p-4 bg-discord-700 rounded-lg border-discord">
+                    </div>
+                    <div class="mb-6">
+                        <label for="product-image" class="block text-sm font-medium text-text-primary mb-2">URL da Imagem</label>
+                        <input type="text" id="product-image" class="w-full p-4 bg-discord-700 rounded-lg border-discord">
+                    </div>
+                    <button id="create-product" class="w-full bg-accent-500 text-white py-3 rounded-lg hover:bg-accent-600 hover-lift transition-colors flex items-center justify-center">
+                        <span>Criar</span>
+                        <i class="fas fa-spinner fa-spin hidden ml-2 product-loading"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="mb-10">
+                <h2 class="text-xl font-semibold gradient-text mb-6">Vendas</h2>
+                <div class="bg-discord-800 p-6 rounded-lg border-discord">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="bg-discord-700">
+                                <th class="p-3">Usuário</th>
+                                <th class="p-3">Produto</th>
+                                <th class="p-3">Total</th>
+                                <th class="p-3">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="sales-table"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="mb-10">
+                <h2 class="text-xl font-semibold gradient-text mb-6">Pedidos</h2>
+                <div class="bg-discord-800 p-6 rounded-lg border-discord">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="bg-discord-700">
+                                <th class="p-3">Usuário</th>
+                                <th class="p-3">Total</th>
+                                <th class="p-3">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orders-table"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="mb-10">
+                <h2 class="text-xl font-semibold gradient-text mb-6">Tickets de Suporte</h2>
+                <div class="bg-discord-800 p-6 rounded-lg border-discord">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="bg-discord-700">
+                                <th class="p-3">Usuário</th>
+                                <th class="p-3">Assunto</th>
+                                <th class="p-3">Prioridade</th>
+                                <th class="p-3">Status</th>
+                                <th class="p-3">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tickets-table"></tbody>
+                    </table>
+                </div>
+            </div>
+            <p id="message" class="mt-4 text-center text-sm text-text-secondary hidden"></p>
+        </main>
+    </div>
+    <script>
+        let token = null;
+
+        async function loadConfig() {
+            const response = await fetch('config.json');
+            return await response.json();
+        }
+
+        function showMessage(message, isError = true) {
+            const el = document.getElementById('message');
+            el.textContent = message;
+            el.classList.remove('hidden', isError ? 'text-green-500' : 'text-red-500');
+            el.classList.add(isError ? 'text-red-500' : 'text-green-500');
+            setTimeout(() => el.classList.add('hidden'), 5000);
+        }
+
+        async function loadCategories() {
+            const config = await loadConfig();
+            const select = document.getElementById('product-category');
+            try {
+                const response = await fetch(`${config.apiUrl}/categories`, {
+                    headers: { 'X-API-Key': config.apiKey }
+                });
+                const categories = await response.json();
+                select.innerHTML = categories.map(cat => `<option value="${cat.id}">${cat.name}</option>`).join('');
+            } catch (error) {
+                showMessage(`Erro ao carregar categorias: ${error.message}`);
+            }
+        }
+
+        async function loadSales() {
+            const config = await loadConfig();
+            try {
+                const response = await fetch(`${config.apiUrl}/sales`, {
+                    headers: { 'Authorization': `Bearer ${token}`, 'X-API-Key': config.apiKey }
+                });
+                const sales = await response.json();
+                const table = document.getElementById('sales-table');
+                table.innerHTML = sales.map(sale => `
+                    <tr>
+                        <td class="p-3">${sale.user_id}</td>
+                        <td class="p-3">${sale.product_id}</td>
+                        <td class="p-3">R$${sale.total.toFixed(2)}</td>
+                        <td class="p-3">${sale.status}</td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                showMessage(`Erro ao carregar vendas: ${error.message}`);
+            }
+        }
+
+        async function loadOrders() {
+            const config = await loadConfig();
+            try {
+                const response = await fetch(`${config.apiUrl}/orders`, {
+                    headers: { 'Authorization': `Bearer ${token}`, 'X-API-Key': config.apiKey }
+                });
+                const orders = await response.json();
+                const table = document.getElementById('orders-table');
+                table.innerHTML = orders.map(order => `
+                    <tr>
+                        <td class="p-3">${order.user_id}</td>
+                        <td class="p-3">R$${order.total.toFixed(2)}</td>
+                        <td class="p-3">${order.status}</td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                showMessage(`Erro ao carregar pedidos: ${error.message}`);
+            }
+        }
+
+        async function loadTickets() {
+            const config = await loadConfig();
+            try {
+                const response = await fetch(`${config.apiUrl}/support-tickets`, {
+                    headers: { 'Authorization': `Bearer ${token}`, 'X-API-Key': config.apiKey }
+                });
+                const tickets = await response.json();
+                const table = document.getElementById('tickets-table');
+                table.innerHTML = tickets.map(ticket => `
+                    <tr>
+                        <td class="p-3">${ticket.user_id}</td>
+                        <td class="p-3">${ticket.subject}</td>
+                        <td class="p-3">${ticket.priority}</td>
+                        <td class="p-3">${ticket.status}</td>
+                        <td class="p-3">
+                            <button data-id="${ticket.id}" class="close-ticket-btn bg-accent-500 text-white px-3 py-1 rounded-lg hover:bg-accent-600 hover-lift transition-colors flex items-center">
+                                <span>Fechar</span>
+                                <i class="fas fa-spinner fa-spin hidden ml-2 close-loading"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+
+                document.querySelectorAll('.close-ticket-btn').forEach(btn => {
+                    btn.addEventListener('click', async () => {
+                        const ticketId = btn.getAttribute('data-id');
+                        const text = btn.querySelector('span');
+                        const loading = btn.querySelector('.close-loading');
+                        btn.disabled = true;
+                        text.textContent = 'Fechando...';
+                        loading.classList.remove('hidden');
+                        try {
+                            const config = await loadConfig();
+                            const response = await fetch(`${config.apiUrl}/support-tickets/${ticketId}`, {
+                                method: 'PUT',
+                                headers: {
+                                    'Authorization': `Bearer ${token}`,
+                                    'X-API-Key': config.apiKey,
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({ status: 'closed' })
+                            });
+                            if (!response.ok) throw new Error((await response.json()).detail);
+                            showMessage('Ticket fechado com sucesso!', false);
+                            loadTickets();
+                        } catch (error) {
+                            showMessage(`Erro: ${error.message}`);
+                        } finally {
+                            btn.disabled = false;
+                            text.textContent = 'Fechar';
+                            loading.classList.add('hidden');
+                        }
+                    });
+                });
+            } catch (error) {
+                showMessage(`Erro ao carregar tickets: ${error.message}`);
+            }
+        }
+
+        document.getElementById('login').addEventListener('click', async () => {
+            const apiKey = document.getElementById('api-key').value;
+            const btn = document.getElementById('login');
+            const text = btn.querySelector('span');
+            const loading = btn.querySelector('.login-loading');
+            if (!apiKey) {
+                showMessage('Por favor, insira uma API Key.', true, 'login-message');
+                return;
+            }
+            btn.disabled = true;
+            text.textContent = 'Entrando...';
+            loading.classList.remove('hidden');
+            try {
+                const config = await loadConfig();
+                const response = await fetch(`${config.apiUrl}/admin/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ api_key: apiKey })
+                });
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.detail);
+                token = data.access_token;
+                localStorage.setItem('token', token);
+                localStorage.setItem('apiKey', apiKey);
+                document.getElementById('login-section').classList.add('hidden');
+                document.getElementById('dashboard-section').classList.remove('hidden');
+                loadCategories();
+                loadSales();
+                loadOrders();
+                loadTickets();
+            } catch (error) {
+                showMessage(`Erro: ${error.message}`, true, 'login-message');
+            } finally {
+                btn.disabled = false;
+                text.textContent = 'Entrar';
+                loading.classList.add('hidden');
+            }
+        });
+
+        document.getElementById('create-category').addEventListener('click', async () => {
+            const name = document.getElementById('category-name').value;
+            const image = document.getElementById('category-image').value;
+            const btn = document.getElementById('create-category');
+            const text = btn.querySelector('span');
+            const loading = btn.querySelector('.category-loading');
+            if (!name) {
+                showMessage('Por favor, insira o nome da categoria.');
+                return;
+            }
+            btn.disabled = true;
+            text.textContent = 'Criando...';
+            loading.classList.remove('hidden');
+            try {
+                const config = await loadConfig();
+                const response = await fetch(`${config.apiUrl}/categories`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'X-API-Key': config.apiKey,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name, image_url: image })
+                });
+                if (!response.ok) throw new Error((await response.json()).detail);
+                showMessage('Categoria criada com sucesso!', false);
+                loadCategories();
+            } catch (error) {
+                showMessage(`Erro: ${error.message}`);
+            } finally {
+                btn.disabled = false;
+                text.textContent = 'Criar';
+                loading.classList.add('hidden');
+            }
+        });
+
+        document.getElementById('create-product').addEventListener('click', async () => {
+            const name = document.getElementById('product-name').value;
+            const price = parseFloat(document.getElementById('product-price').value);
+            const categoryId = document.getElementById('product-category').value;
+            const description = document.getElementById('product-description').value;
+            const stock = parseInt(document.getElementById('product-stock').value);
+            const image = document.getElementById('product-image').value;
+            const btn = document.getElementById('create-product');
+            const text = btn.querySelector('span');
+            const loading = btn.querySelector('.product-loading');
+            if (!name || !price || !categoryId || !description || !stock) {
+                showMessage('Por favor, preencha todos os campos.');
+                return;
+            }
+            btn.disabled = true;
+            text.textContent = 'Criando...';
+            loading.classList.remove('hidden');
+            try {
+                const config = await loadConfig();
+                const response = await fetch(`${config.apiUrl}/products`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'X-API-Key': config.apiKey,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name,
+                        price,
+                        category_id: categoryId,
+                        description,
+                        stock,
+                        images: image ? [image] : []
+                    })
+                });
+                if (!response.ok) throw new Error((await response.json()).detail);
+                showMessage('Produto criado com sucesso!', false);
+            } catch (error) {
+                showMessage(`Erro: ${error.message}`);
+            } finally {
+                btn.disabled = false;
+                text.textContent = 'Criar';
+                loading.classList.add('hidden');
+            }
+        });
+
+        document.getElementById('logout').addEventListener('click', () => {
+            token = null;
+            localStorage.removeItem('token');
+            localStorage.removeItem('apiKey');
+            document.getElementById('dashboard-section').classList.add('hidden');
+            document.getElementById('login-section').classList.remove('hidden');
+        });
+
+        window.addEventListener('load', async () => {
+            token = localStorage.getItem('token');
+            const apiKey = localStorage.getItem('apiKey');
+            if (token && apiKey) {
+                const config = await loadConfig();
+                try {
+                    const response = await fetch(`${config.apiUrl}/orders`, {
+                        headers: { 'Authorization': `Bearer ${token}`, 'X-API-Key': apiKey }
+                    });
+                    if (response.ok) {
+                        document.getElementById('login-section').classList.add('hidden');
+                        document.getElementById('dashboard-section').classList.remove('hidden');
+                        loadCategories();
+                        loadSales();
+                        loadOrders();
+                        loadTickets();
+                    } else {
+                        localStorage.removeItem('token');
+                        localStorage.removeItem('apiKey');
+                    }
+                } catch (error) {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('apiKey');
+                }
+            }
+        });
+    </script>
+</body>
+</html>
